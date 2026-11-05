@@ -1,6 +1,6 @@
 modLoader = "javafml"
-loaderVersion = "[1,)"
-license = "MIT"
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
 
 [[mods]]
 modId = "${mod_id}"
@@ -18,21 +18,21 @@ config = "ae2_emi_quick_fill.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.1.0,)"
+versionRange = "${neo_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.1,1.22)"
+versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "ae2"
 type = "required"
-versionRange = "[19.2.0,)"
+versionRange = "[26.1,)"
 ordering = "AFTER"
 side = "BOTH"
 

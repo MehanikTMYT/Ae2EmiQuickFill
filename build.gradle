@@ -1,13 +1,14 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.74'
+    // 2.0.141 — последняя moddev, проверенная флотом на 26.1.2 + Gradle 9.2.1 (см. AE-Compendium)
+    id 'net.neoforged.moddev' version '2.0.141'
 }
 
 group = mod_group_id
 version = mod_version
 
 base {
-    // 产物名带游戏版本：ae2_emi_quick_fill-1.21.1-1.0.0.jar
+    // 产物名带游戏版本：ae2_emi_quick_fill-26.1.2-1.0.1+neoforge.26.1.2-port.1.jar
     archivesName = "${mod_id}-${minecraft_version}"
 }
 
@@ -28,40 +29,51 @@ neoForge {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         name = 'ModMaven'
         url = 'https://modmaven.dev/'
         content {
             includeGroup 'org.appliedenergistics'
-            includeGroup 'appeng'
         }
     }
 }
 
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
-    // AE2 从 modmaven.dev 拉取；AE2 更新时改 gradle.properties 里的 ae2_version
+    // AE2 26.1-линейки из mavenLocal: EMI-интеграция вернулась в appeng.client.integrations.emi
+    // (в 26.1.12-beta её не было, в 26.1.12-SNAPSHOT — есть; см. PORTING.md)
     compileOnly "org.appliedenergistics:appliedenergistics2:${ae2_version}"
 
-    // EMI 走 libs/ 本地 jar：Emi 的 maven（TerraformersMC → repo.sleeping.town）在国内经常连不上，
-    // 拉不到时把 emi-neoforge-<version>.jar 放进 libs/ 再编译（该目录的 jar 不入版本控制）
-    // EMI 走 libs/ 本地 jar，按文件名挑本分支那份
-    compileOnly fileTree(dir: 'libs', include: ['*1.21.1*.jar'])
+    // EMI из mavenLocal (fleet-сборка dev.emi:emi-neoforge): api-классификатор для компиляции,
+    // полный jar в localRuntime для дев-запусков. libs/ больше не нужен.
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    localRuntime "dev.emi:emi-neoforge:${emi_version}"
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = java_version as int
+    options.compilerArgs += ['-Xmaxerrs', '1000']
 }
 
 processResources {
     def replaceProperties = [
-            mod_id         : mod_id,
-            mod_name       : mod_name,
-            mod_version    : mod_version,
-            mod_group_id   : mod_group_id,
-            mod_authors    : mod_authors,
-            mod_description: mod_description
+            mod_id               : mod_id,
+            mod_name             : mod_name,
+            mod_version          : mod_version,
+            mod_group_id         : mod_group_id,
+            mod_authors          : mod_authors,
+            mod_license          : mod_license,
+            mod_description      : mod_description,
+            minecraft_version_range: minecraft_version_range,
+            neo_version_range    : neo_version_range,
+            loader_version_range : loader_version_range
     ]
     inputs.properties replaceProperties
     filesMatching('META-INF/neoforge.mods.toml') {

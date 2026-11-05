@@ -44,29 +44,30 @@ EMI 的 Shift+点击传的是 `CRAFTABLE`，而 AE2 的终端（合成终端、�
 |---|---|---|
 | [`1.21.1`](../../tree/1.21.1) | 1.21.1 | NeoForge 21.1.x |
 | [`1.20.1`](../../tree/1.20.1) | 1.20.1 | Forge 47.x |
-| `26.1.2` | 26.1.2 | NeoForge（暂缺，原因见下） |
+| [`port/26.1.2`](../../tree/port/26.1.2) | 26.1.2 | NeoForge 26.1.2.x（Java 25） |
 
-26.1.2 暂时做不了：AE2 的 26.1 线把 EMI 集成整个去掉了。26.1.12-beta 的 jar 里 `appeng/integration/modules/` 只剩 curios、igtooltip、itemlists、jade、wthit，JEI 和 EMI 都没有，仓库源码里也搜不到 `EmiCraftContext`。本模组要补的 `AbstractRecipeHandler` 在那里根本不存在。等 AE2 把 EMI 支持加回来再说。
+26.1.2 之前做不了：AE2 的 26.1 早期版本（26.1.12-beta）把 EMI 集成整个去掉了。**26.1.12-SNAPSHOT
+起 EMI 集成回归**，但包从 `appeng.integration.modules.emi` 挪到了 `appeng.client.integrations.emi`
+（AE2 自己的客户端代码里）。本分支的 Mixin 已经指向新包名，依赖走 mavenLocal 的
+AE2 26.1.12-SNAPSHOT 和 EMI 1.1.24（fleet 构建）。详见 `PORTING.md`。
 
 ## 依赖
 
-- Minecraft 1.21.1、NeoForge 21.1.x
-- AE2 19.2.x、EMI 1.1.18+
+- Minecraft 26.1.2、NeoForge 26.1.2.x、Java 25
+- AE2 26.1.x、EMI 1.1.24
 
-1.20.1 分支需要 AE2 **15.4.10 或更新**——EMI 原生支持是那一版才加进 AE2 的，更早的版本里没有被本模组打补丁的那段逻辑。
+1.21.1 分支需要 AE2 19.2.x、EMI 1.1.18+；1.20.1 分支需要 AE2 **15.4.10 或更新**——EMI 原生支持
+是那一版才加进 AE2 的，更早的版本里没有被本模组打补丁的那段逻辑。
 
 ## 构建
 
-把 EMI 的 jar 放进 `libs/`（下载地址写在 `libs/README.md` 里），然后：
-
 ```bash
-./gradlew build
+JAVA_HOME=/usr/lib/jvm/java-25-openjdk-amd64 ./gradlew build
 # 产物在 build/libs/
 ```
 
-AE2 从 Maven Central 拉，不用手动放。EMI 只能用本地 jar：它发布在 Emi 自己的 maven（TerraformersMC 只是转发到 `repo.sleeping.town`），国内经常连不上，Central 上也没有。
-
-改依赖版本：EMI 换 `libs/` 里的 jar，AE2 改 `gradle.properties` 的 `ae2_version`，NeoForge 改 `neo_version`。
+AE2 和 EMI 都从 mavenLocal 解析（fleet 本地构建，坐标见 `gradle.properties` 的 `ae2_version` /
+`emi_version`），不需要手动放 jar。改依赖版本就改这两个属性。
 
 ## License
 

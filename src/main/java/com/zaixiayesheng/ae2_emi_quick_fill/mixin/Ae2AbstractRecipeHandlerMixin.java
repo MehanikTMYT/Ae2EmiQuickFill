@@ -26,18 +26,22 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * code is rewritten.
  *
  * <h2>Target classes</h2>
- * <p>{@code appeng.integration.modules.emi.AbstractRecipeHandler} is package-private, so it is
- * referenced by string in {@link Mixin#targets()} rather than by a literal class.
+ * <p>AE2 26.1 moved its EMI integration from {@code appeng.integration.modules.emi} to
+ * {@code appeng.client.integrations.emi} (it was entirely absent in 26.1.12-beta and returned by
+ * 26.1.12-SNAPSHOT). {@code appeng.client.integrations.emi.AbstractRecipeHandler} is package-private,
+ * so it is referenced by string in {@link Mixin#targets()} rather than by a literal class.
  *
  * <p>{@code EmiEncodePatternHandler} (the pattern encoding terminal) extends it but overrides
  * {@code canCraft} with the same {@code getType() == FILL_BUTTON} guard, so it needs the redirect
  * too — patching the parent alone leaves the encoding terminal rejecting shift-click.
+ * The crafting/wireless terminals use {@code EmiUseCraftingRecipeHandler}, which inherits the
+ * parent {@code canCraft} and is covered by the first target.
  *
  * @author zaixiayesheng (在下叶笙)
  */
 @Mixin(targets = {
-        "appeng.integration.modules.emi.AbstractRecipeHandler",
-        "appeng.integration.modules.emi.EmiEncodePatternHandler"
+        "appeng.client.integrations.emi.AbstractRecipeHandler",
+        "appeng.client.integrations.emi.EmiEncodePatternHandler"
 })
 public class Ae2AbstractRecipeHandlerMixin {
 

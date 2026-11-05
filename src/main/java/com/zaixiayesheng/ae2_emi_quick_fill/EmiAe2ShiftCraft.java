@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author zaixiayesheng (在下叶笙)
  */
-@Mod(value = EmiAe2ShiftCraft.MOD_ID, dist = Dist.CLIENT)
+// FML 11 (NeoForge 26.1): @Mod#dist is now Dist[] — single-element array shorthand is kept
+@Mod(value = EmiAe2ShiftCraft.MOD_ID, dist = {Dist.CLIENT})
 public final class EmiAe2ShiftCraft {
 
     /** Mod identifier, must match {@code mod_id} in gradle.properties and neoforge.mods.toml. */
