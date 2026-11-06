@@ -34,7 +34,10 @@ modId = "ae2"
 type = "required"
 versionRange = "[26.1,)"
 ordering = "AFTER"
-side = "BOTH"
+# CLIENT, не BOTH: мод патчит только клиентские EMI-хендлеры AE2. FML проверяет
+# обязательные зависимости ДО dist-фильтра @Mod(CLIENT), поэтому side="BOTH"
+# ронял бы выделенный сервер без AE2 (см. smoke aqf-smoke 2026-11-06).
+side = "CLIENT"
 
 [[dependencies.${mod_id}]]
 modId = "emi"

@@ -26,6 +26,19 @@ neoForge {
             sourceSet sourceSets.main
         }
     }
+
+    // Fleet QA: .port-tools/qa_server.sh запускает `./gradlew runServer`.
+    // Мод client-only и на выделенном сервере не грузится — server-ран нужен только для smoke:
+    // валидность toml/pack.mcmeta/mixin-конфига и старт мира без падения загрузчика.
+    // DSL moddev 2.0.141: gameDirectory/sourceSet/programArgument (НЕ workingDirectory/modSource из NG7).
+    runs {
+        configureEach { sourceSet = sourceSets.main }
+        server {
+            server()
+            gameDirectory = project.file('run/server')
+            programArgument '--nogui'
+        }
+    }
 }
 
 repositories {
